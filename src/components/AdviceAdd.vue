@@ -23,16 +23,23 @@ export default defineComponent({
 
         const newQuestion = ref('')
 
+        const validation = () => {
+
+            const schema = /[^(\0|\s+)+]/
+            if (!schema.test(newQuestion.value)){
+                isError.value = true
+                return false
+            }
+
+            isError.value = false
+            return true
+        }
+
         const addQA = () => {
-            if(isError.value){
-                isError.value = false
+            if (!validation()){
+                return
             }
-
-            const validation = /[^(\0|\s+)+]/
-            if (!validation.test(newQuestion.value)){
-                return isError.value = true
-            }
-
+            
             adviceStore.addAdvice(newQuestion.value).finally(()=> {
                 newQuestion.value = ''
             })
