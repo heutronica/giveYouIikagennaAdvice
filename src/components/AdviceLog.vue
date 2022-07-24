@@ -1,30 +1,27 @@
 <template>
 <ul>
-    <li v-for="list in lists">
+    <li v-for="list in adviceList">
     <div class="wrap">
         <span class="question">{{list.question}}</span>
         <span class="advice">{{list.advice}}</span>
     </div>
-        <button @click="deleteQA(list.id.valueOf())">👎</button>
+        <button @click="deleteAdvice(list.id.valueOf())">👎</button>
     </li>
 </ul>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue"
-import { adviceStore }from '../stores/adviceStore'
+import { defineComponent, inject } from "vue"
+import { AdviceStore }from '../stores/adviceStore'
+import { AdviceKey } from "../stores/adviceKey"
 
 export default defineComponent({
     setup() {
-        const lists = adviceStore.state.qaList
-
-        const deleteQA = (id: number) => {
-            adviceStore.deleteAdvice(id)
-        }
+        const { deleteAdvice, adviceList } = inject(AdviceKey) as AdviceStore
 
         return {
-            lists,
-            deleteQA
+            deleteAdvice,
+            adviceList
         }
     }
     

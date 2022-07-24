@@ -13,36 +13,51 @@ type QA = {
     advice: String
 }
 
-let qaList = ref<QA[]>([{
-    id:0,
-    question: 'add your advice',
-    advice: 'none'
-}])
+export function useAdvice() {
+    const state = {
+        adviceList: ref<QA[]>([{
+            id:0,
+            question: 'add your advice',
+            advice: 'none'
+        }]),
+        isLoading: ref(false),
+    }
 
-let idCount = 1
-let isLoading = ref(false)
+    let idCount = 1
 
-export const adviceStore = {
-    state: {qaList,isLoading},
-    async addAdvice(newQuestion: string){
-        isLoading.value = true
+    async function addAdvice(newQuestion: string) {
+        state.isLoading.value = true
         
         await fetch('https://api.adviceslip.com/advice', {cache: 'no-store'})
         .then(res => res.json())
         .then(res => 
-            this.state.qaList.value.unshift({
+            state.adviceList.value.unshift({
                 id: idCount++,
                 question: newQuestion,
                 advice:res.slip.advice
 
             })
         ).finally(()=>{
-            isLoading.value = false
+            state.isLoading.value = false
         }
         )
-    },
-    deleteAdvice(id: number){
-        this.state.qaList.value = this.state.qaList.value.filter(qa => qa.id !== id)
-        console.log(this.state.qaList)
+    }
+
+    const deleteAdvice = (id: number) => {
+        state.adviceList.value = state.adviceList.value.filter(qa => qa.id !== id)
+    }
+
+    return {
+        get adviceList(){
+            return state.adviceList
+        },
+        get isLoading(){
+            return state.isLoading
+        },
+        state,
+        addAdvice,
+        deleteAdvice
     }
 }
+
+export type AdviceStore = ReturnType<typeof useAdvice>

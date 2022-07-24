@@ -7,7 +7,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent} from "vue"
+import { defineComponent, provide } from "vue"
+
+import { AdviceKey } from "./stores/adviceKey"
+import { useAdvice } from "./stores/adviceStore"
 
 import AdviceLog from './components/AdviceLog.vue'
 import AdviceAdd from "./components/AdviceAdd.vue"
@@ -16,6 +19,10 @@ export default defineComponent({
     components: {
         AdviceLog,
         AdviceAdd
+    },
+    setup(){
+        provide(AdviceKey, useAdvice())
+        return {}
     }
 })
 </script>

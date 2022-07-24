@@ -10,19 +10,17 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue"
-import { adviceStore }from '../stores/adviceStore'
+import { defineComponent, inject, ref } from "vue"
+import { AdviceStore }from '../stores/adviceStore'
+import { AdviceKey } from "../stores/adviceKey"
 
 export default defineComponent({
     setup() {
-        const lists = adviceStore.state.qaList
 
-        // refactor: store側にローディングなどの状態を持たせるのではなく、コンポーネント側で持つべきでは？
-        let isLoading = adviceStore.state.isLoading
-        let isError = ref(false)
+        const { addAdvice, isLoading } = inject(AdviceKey) as AdviceStore
 
+        const isError = ref(false)
         const newQuestion = ref('')
-
         const validation = () => {
 
             const schema = /[^(\0|\s+)+]/
@@ -30,7 +28,6 @@ export default defineComponent({
                 isError.value = true
                 return false
             }
-
             isError.value = false
             return true
         }
@@ -39,18 +36,17 @@ export default defineComponent({
             if (!validation()){
                 return
             }
-            
-            adviceStore.addAdvice(newQuestion.value).finally(()=> {
+
+            addAdvice(newQuestion.value).finally(()=> {
                 newQuestion.value = ''
             })
         }
 
         return {
-            lists,
-            isLoading,
-            isError,
+            addQA,
             newQuestion,
-            addQA
+            isError,
+            isLoading
         }
     }
     
